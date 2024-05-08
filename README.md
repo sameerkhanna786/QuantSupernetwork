@@ -1,6 +1,6 @@
-## NAS-Unet: Neural Architecture Search for Medical Image Segmentation
+## Quantizing Supernetworks For Medical Image Segmentation
 
-## Requirement
+## Requirements
 
 + Ubuntu
 + python 3.8
@@ -24,31 +24,36 @@
 
 ## Usage
 
+### Install dependencies
+
+Note that depending on your system environment, you might need to handle package versioning manually.
+
 ```bash
 pip3 install -r requirements.txt
 ```
 
-### Search the architecture
+### 1. Search the architecture
 
-1. Cell search
 ```bash
 cd experiment
 # Search at full precision on pascal voc2012
 python search_cell.py --config ../configs/nas_unet/nas_unet_voc.yml
 ```
 
-2. Update Genotype
+### 2. Update Genotype
 
 Update Genotype at geno_searched.py, and add variable name to respective config file.
 
-3. Train on downstream task
+### 3. Train on downstream task
 ```bash
 cd experiment
-# Search at full precision on promise12
+# Train on promise12 using optimized cell architecture
 python train.py --config ../configs/nas_unet/nas_unet_promise12.yml
 ```
 
-#### Options
+### Options
+
+#### Cell Search
 
 ```bash
 cd experiment
@@ -56,8 +61,21 @@ cd experiment
 python search_cell.py --help
 ```
 
-NOTE: Running multiple low precision options at the same time is untested behavior. 
-Please use only one such tag at a time.
+```
+usage: search_cell.py [-h] [--config [CONFIG]] [--quantize] [--mixed_precision] [--low_prec_optim]
+
+config
+
+optional arguments:
+  -h, --help         show this help message and exit
+  --config [CONFIG]  Configuration file to use (default is nas_unet_voc.yml)
+  --quantize         Whether to quantize or not (default is False)
+  --mixed_precision  Whether to use mixed precision or not (default is False)
+  --low_prec_optim   Whether to use a low precision optimizer or not (default is False)
+```
+NOTE: Running multiple low precision options at the same time is untested behavior; please use only one such tag at a time.
+
+#### Downstream Training
 
 ```bash
 cd experiment
@@ -65,6 +83,18 @@ cd experiment
 python train.py --help
 ```
 
+```
+usage: train.py [-h] [--config [CONFIG]] [--model [MODEL]] [--ft] [--warm [WARM]]
+
+config
+
+optional arguments:
+  -h, --help         show this help message and exit
+  --config [CONFIG]  Configuration file to use
+  --model [MODEL]    Model to train and evaluation
+  --ft               finetuning on a different dataset
+  --warm [WARM]      warm up from pre epoch
+```
 ## Datasets
 
 Datasets are all assumed to be at location ```/train_tiny_data/imgseg/```.
